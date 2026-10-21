@@ -229,3 +229,11 @@ system.pdb
 log.csv
 gl_z.csv
 run.log
+*.pdb
+*_state.xml
+*_log.csv
+summary.txt
+timeseries.*
+density.*
+scd.*
+*.out
