@@ -14,7 +14,7 @@ python analyze.py --skip 1           # 先頭 1 ns を捨てて解析
 ```
 
 - 系はPOPC 126分子・約3.2万原子。`addMembrane` の最小パッチがこの大きさなので、`--pad` で小さくはできない(大きくはできる)
-- `--threads N` でCPUスレッド数を指定できる
+- 計算はCPUが既定(`--platform CPU`)。`--threads N` でスレッド数を指定できる。GPUがある環境でだけ `--platform CUDA` などを指定する
 - 再開時、最後のチェックポイント以降に書かれたDCDフレームは重複する。チェックポイントは100 ps毎に保存する
 
 ## 設定

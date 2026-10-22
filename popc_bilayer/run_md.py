@@ -26,6 +26,7 @@ ap.add_argument("stage", choices=["equil", "prod"])
 ap.add_argument("--ns", type=float, default=None, help="計算長 [ns](既定: equil 2, prod 8)")
 ap.add_argument("--pad", type=float, default=1.0,
                 help="膜パッチの大きさの目安 [nm]。addMembraneの最小パッチは約126脂質(2.5以下では変わらない)")
+ap.add_argument("--platform", default="CPU", help="OpenMMのPlatform(既定: CPU。GPUがあるときだけ CUDA / OpenCL を指定)")
 ap.add_argument("--threads", type=int, default=None, help="CPUスレッド数(既定: 全コア)")
 ap.add_argument("--resume", action="store_true", help="prod.chk から再開")
 args = ap.parse_args()
@@ -58,8 +59,7 @@ def make_simulation(topology):
         1 * unit.bar, 0 * unit.bar * unit.nanometer, TEMP,
         MonteCarloMembraneBarostat.XYIsotropic, MonteCarloMembraneBarostat.ZFree))
     integrator = LangevinMiddleIntegrator(TEMP, 1 / unit.picosecond, DT)
-    platform = max((Platform.getPlatform(i) for i in range(Platform.getNumPlatforms())),
-                   key=lambda p: p.getSpeed())
+    platform = Platform.getPlatformByName(args.platform)
     props = {}
     if args.threads and platform.getName() == "CPU":
         props["Threads"] = str(args.threads)

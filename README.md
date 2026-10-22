@@ -19,4 +19,6 @@ pip install openmm MDAnalysis matplotlib   # popc_bilayer
 conda install -c conda-forge openmm openmmforcefields openff-toolkit rdkit ambertools   # gl_popc
 ```
 
+スクリプトはすべてCPU計算を既定にしている(GPUは基本的に使わない前提)。
+
 計算の出力(`*.dcd`, `*.pdb`, `log.csv` など)はコミットしない(`.gitignore` 参照)。

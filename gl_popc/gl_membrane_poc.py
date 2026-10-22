@@ -22,7 +22,9 @@ from openmm import Vec3
 # ---- 設定 ----
 CHARGE_STATE = -3        # -3: 3つのCOOHすべて脱プロトン化(pH5〜7想定) / 0: 中性
 MEMBRANE_OFFSET = -4.0   # 膜中心z [nm]。GLを原点に置き、膜はその下に配置
-SIM_NS = 0.2             # 本計算の長さ [ns] (CPU向けに短縮。GPUなら1〜10に)
+SIM_NS = 0.2             # 本計算の長さ [ns] (CPU向けに短縮)
+PLATFORM = "CPU"         # 既定はCPU。GPUがあるときだけ "CUDA" / "OpenCL"
+THREADS = None           # CPUスレッド数(None: 全コア)
 TEMP = 303 * unit.kelvin
 DT = 4 * unit.femtoseconds  # 水素質量再分配(HMR)前提の4 fs
 REPORT_PS = 10
@@ -78,10 +80,10 @@ system.addForce(MonteCarloMembraneBarostat(
     MonteCarloMembraneBarostat.XYIsotropic, MonteCarloMembraneBarostat.ZFree))
 integrator = LangevinMiddleIntegrator(TEMP, 1 / unit.picosecond, DT)
 
-platform = max((Platform.getPlatform(i) for i in range(Platform.getNumPlatforms())),
-               key=lambda p: p.getSpeed())
-print("Platform:", platform.getName())
-sim = app.Simulation(modeller.topology, system, integrator, platform)
+platform = Platform.getPlatformByName(PLATFORM)
+props = {"Threads": str(THREADS)} if THREADS and PLATFORM == "CPU" else {}
+print("Platform:", platform.getName(), props)
+sim = app.Simulation(modeller.topology, system, integrator, platform, props)
 sim.context.setPositions(modeller.positions)
 
 print("エネルギー最小化...")
